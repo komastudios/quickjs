@@ -44,7 +44,6 @@ pub fn build(b: *std.Build) !void {
     if (android) {
         lib_static.defineCMacro("__ANDROID__", null);
     }
-    lib_static.defineCMacro("CONFIG_VERSION", quickjs_version);
     lib_static.addCSourceFiles(&quickjs_sources, quickjs_cflags);
     lib_static.linkLibC();
 
@@ -70,7 +69,6 @@ pub fn build(b: *std.Build) !void {
     if (android) {
         lib_shared.defineCMacro("__ANDROID__", null);
     }
-    lib_shared.defineCMacro("CONFIG_VERSION", quickjs_version);
     lib_shared.addCSourceFiles(&quickjs_sources, quickjs_cflags);
     lib_shared.linkLibC();
 

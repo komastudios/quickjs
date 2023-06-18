@@ -5,7 +5,7 @@
 
 #include "quickjs-extern.h"
 
-static const char* JS_VERSION = CONFIG_VERSION;
+static const char* JS_VERSION = QUICKJS_VERSION;
 
 const char* js_version(void)
 {

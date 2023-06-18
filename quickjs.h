@@ -28,6 +28,8 @@
 #include <stdio.h>
 #include <stdint.h>
 
+#include "quickjs-version.h"
+
 #ifdef __cplusplus
 extern "C" {
 #endif
