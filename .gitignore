@@ -1,0 +1,3 @@
+.install/
+zig-cache/
+zig-out/
