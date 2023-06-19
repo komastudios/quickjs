@@ -12,12 +12,13 @@ const quickjs_sources = [_][]const u8{
 const quickjs_cflags: []const []const u8 = &.{
     "-std=c99",
     "-DQUICKJS_BUILD",
-    // "-fno-builtin-bcmp", // TODO: only add this on Android
+};
+
+const quickjs_cflags_android: []const []const u8 = quickjs_cflags ++ [_][]const u8{
+    "-fno-builtin-bcmp",
 };
 
 const quickjs_public_headers = [_][]const u8{ "quickjs.h", "quickjs-libc.h" };
-
-const quickjs_version = "\"2021-03-27\""; // TODO: read from version file
 
 pub fn build(b: *std.Build) !void {
     const target = b.standardTargetOptions(.{});
@@ -43,8 +44,10 @@ pub fn build(b: *std.Build) !void {
     }
     if (android) {
         lib_static.defineCMacro("__ANDROID__", null);
+        lib_static.addCSourceFiles(&quickjs_sources, quickjs_cflags_android);
+    } else {
+        lib_static.addCSourceFiles(&quickjs_sources, quickjs_cflags);
     }
-    lib_static.addCSourceFiles(&quickjs_sources, quickjs_cflags);
     lib_static.linkLibC();
 
     b.installArtifact(lib_static);
@@ -68,8 +71,10 @@ pub fn build(b: *std.Build) !void {
     }
     if (android) {
         lib_shared.defineCMacro("__ANDROID__", null);
+        lib_shared.addCSourceFiles(&quickjs_sources, quickjs_cflags_android);
+    } else {
+        lib_shared.addCSourceFiles(&quickjs_sources, quickjs_cflags);
     }
-    lib_shared.addCSourceFiles(&quickjs_sources, quickjs_cflags);
     lib_shared.linkLibC();
 
     b.installArtifact(lib_shared);
