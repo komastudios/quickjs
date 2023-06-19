@@ -285,6 +285,11 @@ JSObject* js_value_get_obj_ref(JSValue* value)
     return value && JS_VALUE_GET_TAG(*value) == JS_TAG_OBJECT ? JS_VALUE_GET_OBJ(*value) : NULL;
 }
 
+int js_value_is_error(JSContext* ctx, JSValue* value)
+{
+    return ctx && value ? JS_IsError(ctx, *value) : 0;
+}
+
 const char* js_str_from_value(JSContext* ctx, JSValue* value)
 {
     const char* result;

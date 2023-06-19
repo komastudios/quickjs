@@ -91,6 +91,8 @@ QUICKJS_EXPORT const void* js_value_get_ptr(JSValue* value);
 
 QUICKJS_EXPORT JSObject* js_value_get_obj_ref(JSValue* value);
 
+QUICKJS_EXPORT int js_value_is_error(JSContext* ctx, JSValue* value);
+
 QUICKJS_EXPORT const char* js_str_from_value(JSContext* ctx, JSValue* value);
 
 QUICKJS_EXPORT void js_str_free(JSContext* ctx, const char* str);
