@@ -56,7 +56,7 @@ static inline JSValue* js_value_alloc(JSContext* ctx, JSValue v)
     
     value = (JSValue*)js_malloc(ctx, sizeof(JSValue));
     if (value) {
-        *value = v;
+        memcpy(value, &v, sizeof(JSValue));
     }
 
     return value;
@@ -78,7 +78,7 @@ static inline void js_value_move(JSContext* ctx, JSValue* out, JSValue val)
 {
     if (out) {
         JS_FreeValue(ctx, *out);
-        *out = val;
+        memcpy(out, &val, sizeof(JSValue));
     } else {
         JS_FreeValue(ctx, val);
     }

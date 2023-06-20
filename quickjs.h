@@ -209,7 +209,7 @@ static inline JS_BOOL JS_VALUE_IS_NAN(JSValue v)
 #else /* !JS_NAN_BOXING */
 
 typedef union JSValueUnion {
-    int32_t int32;
+    int64_t int32;
     double float64;
     void *ptr;
 } JSValueUnion;
