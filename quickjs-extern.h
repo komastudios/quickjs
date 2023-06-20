@@ -57,6 +57,12 @@ QUICKJS_EXPORT size_t js_value_size(void);
 
 QUICKJS_EXPORT JSValue* js_value_new(JSContext* ctx);
 
+QUICKJS_EXPORT JSValue* js_value_new_raw(JSContext* ctx, JSValue* value);
+
+QUICKJS_EXPORT JSValue* js_value_new_dup(JSContext* ctx, JSValue* value);
+
+QUICKJS_EXPORT void js_value_release(JSContext* ctx, JSValue* value);
+
 QUICKJS_EXPORT void js_value_free(JSContext* ctx, JSValue* value);
 
 QUICKJS_EXPORT void js_value_load_int32(JSContext* ctx, JSValue* out, int32_t v);

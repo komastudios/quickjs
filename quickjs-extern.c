@@ -50,13 +50,18 @@ size_t js_value_size(void)
     return sizeof(JSValue);
 }
 
+static inline void js_value_set(JSValue* dst, JSValue src)
+{
+    memcpy(dst, &src, sizeof(JSValue));
+}
+
 static inline JSValue* js_value_alloc(JSContext* ctx, JSValue v)
 {
     JSValue* value;
     
     value = (JSValue*)js_malloc(ctx, sizeof(JSValue));
     if (value) {
-        memcpy(value, &v, sizeof(JSValue));
+        js_value_set(value, v);
     }
 
     return value;
@@ -66,7 +71,7 @@ static inline JSValue* js_value_alloc(JSContext* ctx, JSValue v)
     do { \
         if (ctx && out) { \
             JS_FreeValue(ctx, *out); \
-            *out = (load_expr); \
+            js_value_set(out, (load_expr)); \
         } \
     } while (0)
 
@@ -78,7 +83,7 @@ static inline void js_value_move(JSContext* ctx, JSValue* out, JSValue val)
 {
     if (out) {
         JS_FreeValue(ctx, *out);
-        memcpy(out, &val, sizeof(JSValue));
+        js_value_set(out, val);
     } else {
         JS_FreeValue(ctx, val);
     }
@@ -89,11 +94,32 @@ JSValue* js_value_new(JSContext* ctx)
     return js_value_alloc(ctx, JS_UNDEFINED);
 }
 
+JSValue* js_value_new_raw(JSContext* ctx, JSValue* src)
+{
+    return js_value_alloc(ctx, src ? *src : JS_UNDEFINED);
+}
+
+JSValue* js_value_new_dup(JSContext* ctx, JSValue* src)
+{
+    JSValue* value = js_value_alloc(ctx, src ? *src : JS_UNDEFINED);
+    if (value) {
+        JS_DupValue(ctx, *value);
+    }
+    return value;
+}
+
+void js_value_release(JSContext* ctx, JSValue* value)
+{
+    if (value) {
+        JS_FreeValue(ctx, *value);
+        js_value_set(value, JS_UNDEFINED);
+    }
+}
+
 void js_value_free(JSContext* ctx, JSValue* value)
 {
     if (value) {
         JS_FreeValue(ctx, *value);
-
         js_free(ctx, value);
     }
 }
