@@ -459,10 +459,10 @@ int main(int argc, char** argv) {
     fprintf(stderr, "QuickJS version: %s\n", js_version());
 
     /* Initialize the JS runtime and context */
-    JSRuntime *rt = JS_NewRuntime();
+    JSRuntime *rt = js_runtime_new();
     ASSERT(rt, "Failed to create JSRuntime.");
 
-    JSContext *ctx = JS_NewContext(rt);
+    JSContext *ctx = js_context_new(rt);
     ASSERT(ctx, "Failed to create JSContext.");
 
     test_value_types(ctx);
@@ -475,8 +475,8 @@ int main(int argc, char** argv) {
     test_json(ctx);
 
     /* Clean up */
-    JS_FreeContext(ctx);
-    JS_FreeRuntime(rt);
+    js_context_free(ctx);
+    js_runtime_free(rt);
 
     fprintf(stderr, "All tests passed.\n");
 

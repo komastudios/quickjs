@@ -45,6 +45,16 @@ enum {
 
 QUICKJS_EXPORT const char* js_version(void);
 
+QUICKJS_EXPORT JSRuntime* js_runtime_new(void);
+
+QUICKJS_EXPORT void js_runtime_free(JSRuntime* rt);
+
+QUICKJS_EXPORT JSContext* js_context_new(JSRuntime* rt);
+
+QUICKJS_EXPORT void js_context_free(JSContext* ctx);
+
+QUICKJS_EXPORT size_t js_value_size(void);
+
 QUICKJS_EXPORT JSValue* js_value_new(JSContext* ctx);
 
 QUICKJS_EXPORT void js_value_free(JSContext* ctx, JSValue* value);

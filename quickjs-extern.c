@@ -12,6 +12,44 @@ const char* js_version(void)
     return JS_VERSION;
 }
 
+JSRuntime* js_runtime_new(void)
+{
+    return JS_NewRuntime();
+}
+
+void js_runtime_free(JSRuntime* rt)
+{
+    JS_FreeRuntime(rt);
+}
+
+JSContext* js_context_new(JSRuntime* rt)
+{
+    JSContext* ctx = JS_NewContextRaw(rt);
+    if (ctx) {
+        JS_AddIntrinsicBaseObjects(ctx);
+        JS_AddIntrinsicDate(ctx);
+        JS_AddIntrinsicEval(ctx);
+        JS_AddIntrinsicStringNormalize(ctx);
+        JS_AddIntrinsicRegExp(ctx);
+        JS_AddIntrinsicJSON(ctx);
+        JS_AddIntrinsicProxy(ctx);
+        JS_AddIntrinsicMapSet(ctx);
+        JS_AddIntrinsicTypedArrays(ctx);
+        JS_AddIntrinsicPromise(ctx);
+    }
+    return ctx;
+}
+
+void js_context_free(JSContext* ctx)
+{
+    JS_FreeContext(ctx);
+}
+
+size_t js_value_size(void)
+{
+    return sizeof(JSValue);
+}
+
 static inline JSValue* js_value_alloc(JSContext* ctx, JSValue v)
 {
     JSValue* value;
