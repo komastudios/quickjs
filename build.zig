@@ -39,12 +39,13 @@ pub fn build(b: *std.Build) !void {
     });
     lib_static.addIncludePath(".");
 
-    const build_shared_lib = lib_static.target_info.target.os.tag != .ios;
+    var build_shared_lib = lib_static.target_info.target.os.tag != .ios;
+
+    lib_static.defineCMacro("JS_NO_NAN_BOXING", null);
 
     switch (lib_static.target_info.target.os.tag) {
         .windows => {
             lib_static.defineCMacro("QUICKJS_DLL", null);
-            lib_static.defineCMacro("JS_STRICT_NAN_BOXING", null);
         },
         else => {
             lib_static.defineCMacro("_GNU_SOURCE", null);
@@ -52,7 +53,17 @@ pub fn build(b: *std.Build) !void {
     }
     if (android) {
         lib_static.defineCMacro("__ANDROID__", null);
-        lib_static.addCSourceFiles(&quickjs_sources, quickjs_cflags_android);
+        if (lib_static.target_info.target.cpu.arch == .arm) {
+            std.log.info("Compiling for arm32", .{});
+            lib_static.addCSourceFiles(&quickjs_sources, quickjs_cflags_android ++ [_][]const u8{
+                "-mfloat-abi=softfp",
+                "-mfpu=neon",
+            });
+            build_shared_lib = false;
+        } else {
+            std.log.info("Compiling for arm64", .{});
+            lib_static.addCSourceFiles(&quickjs_sources, quickjs_cflags_android);
+        }
     } else if (lib_static.target_info.target.os.tag == .ios) {
         if (b.sysroot) |sysroot| {
             lib_static.addIncludePath(try fs.path.join(b.allocator, &.{ sysroot, "usr/include" }));
@@ -77,10 +88,11 @@ pub fn build(b: *std.Build) !void {
         });
         lib_shared.addIncludePath(".");
 
+        lib_shared.defineCMacro("JS_NO_NAN_BOXING", null);
+
         switch (lib_shared.target_info.target.os.tag) {
             .windows => {
                 lib_shared.defineCMacro("QUICKJS_DLL", null);
-                lib_shared.defineCMacro("JS_STRICT_NAN_BOXING", null);
             },
             else => {
                 lib_shared.defineCMacro("_GNU_SOURCE", null);
