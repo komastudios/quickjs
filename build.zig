@@ -17,6 +17,7 @@ const quickjs_cflags: []const []const u8 = &.{
 
 const quickjs_cflags_android: []const []const u8 = quickjs_cflags ++ [_][]const u8{
     "-fno-builtin-bcmp",
+    "-fPIC",
 };
 
 const quickjs_cflags_ios: []const []const u8 = quickjs_cflags ++ [_][]const u8{
