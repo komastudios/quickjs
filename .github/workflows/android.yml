@@ -28,10 +28,11 @@ jobs:
 
     steps:
     - uses: actions/checkout@v3
+
     - uses: nttld/setup-ndk@v1
-        id: setup_ndk
-        with:
-          ndk-version: r21e
+      id: setup_ndk
+      with:
+        ndk-version: r21e
     
     - name: Setup (CMake)
       run: |
