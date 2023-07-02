@@ -137,6 +137,11 @@ if (BUILD_INTERPRETER)
 endif()
 
 if(BUILD_TESTING)
+    add_executable(test-extern-static 
+            test-extern.c)
+    target_link_libraries(test-extern-static PUBLIC quickjs-static)
+    add_test(NAME test-extern-static COMMAND $<TARGET_FILE:test-extern-static>)
+    
     if(BUILD_SHARED)
         add_executable(test-extern 
             test-extern.c)
