@@ -14,10 +14,6 @@ jobs:
   build:
     name: ${{ matrix.platform.name }}
     runs-on: ubuntu-22.04
-
-    defaults:
-      run:
-        shell: ${{ matrix.platform.shell }}
     
     strategy:
       fail-fast: false
