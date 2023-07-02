@@ -12,22 +12,39 @@ env:
 
 jobs:
   build:
+    name: ${{ matrix.platform.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell }}
+    
     strategy:
       matrix:
-        os: [ubuntu-22.04, macos-12, windows-2022]
-
-    # The CMake configure and build commands are platform agnostic and should work equally well on Windows or Mac.
-    # You can convert this to a matrix build if you need cross-platform coverage.
-    # See: https://docs.github.com/en/free-pro-team@latest/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
-    runs-on: ${{ matrix.os }}
+        platform:  #[ubuntu-22.04, macos-12, windows-2022]
+          - { name: Linux, os: ubuntu-22.04, shell: bash, flags: "-GNinja" }
+          - { name: macOS, os: macos-12, shell: bash }
+          - { name: Windows, os: windows-2022, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64 }
+          # - { name: Windows, os: windows-2022, shell: pwsh, flags: "-A x64" }
 
     steps:
+    - name: Set up MSYS2
+      if: matrix.platform.shell == 'msys2 {0}'
+      uses: msys2/setup-msys2@v2
+      with:
+        msystem: ${{ matrix.platform.msystem }}
+        install: >-
+          ${{ matrix.platform.msys-env }}-gcc
+          ${{ matrix.platform.msys-env }}-cmake
+          ${{ matrix.platform.msys-env }}-ninja
+          ${{ matrix.platform.msys-env }}-pkg-config
+
     - uses: actions/checkout@v3
 
     - name: Configure CMake
       # Configure CMake in a 'build' subdirectory. `CMAKE_BUILD_TYPE` is only required if you are using a single-configuration generator such as make.
       # See https://cmake.org/cmake/help/latest/variable/CMAKE_BUILD_TYPE.html?highlight=cmake_build_type
-      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}}
+      run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{ matrix.platform.flags }}
 
     - name: Build
       # Build your program with the given configuration
