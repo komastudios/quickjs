@@ -5,6 +5,8 @@ project(quickjs LANGUAGES C)
 set(CMAKE_C_STANDARD 99)
 set(CMAKE_C_STANDARD_REQUIRED True)
 
+set(CMAKE_POSITION_INDEPENDENT_CODE ON)
+
 enable_testing()
 
 option(BUILD_SHARED "Build shared library" ON)
@@ -75,6 +77,11 @@ function(add_quickjs_library TARGET_NAME LIB_TYPE)
     else()
         target_compile_definitions(${TARGET_NAME} PRIVATE _GNU_SOURCE)
         #target_compile_options(${TARGET_NAME} PRIVATE -Wnoimplicit-const-int-float-conversion)
+    endif()
+
+    find_library(MATH_LIBRARY m)
+    if(MATH_LIBRARY)
+        target_link_libraries(${TARGET_NAME} PUBLIC ${MATH_LIBRARY})
     endif()
 
     install(TARGETS ${TARGET_NAME} 
