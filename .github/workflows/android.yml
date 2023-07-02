@@ -19,7 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         platform:  #[ubuntu-22.04, macos-12, windows-2022]
-          - { name: Android, android_abi: "arm64-v8a", android_platform: 23, arch: "aarch64" }
+          - { name: Android (arm64-v8a), android_abi: "arm64-v8a", android_platform: 16 }
+          - { name: Android (armeabi-v7a), android_abi: "armeabi-v7a", android_platform: 16 }
           # - { name: Windows, os: windows-2022, shell: pwsh, flags: "-A x64" }
 
     steps:
@@ -28,7 +29,7 @@ jobs:
     - uses: nttld/setup-ndk@v1
       id: setup_ndk
       with:
-        ndk-version: r21e
+        ndk-version: r21d
     
     - name: Setup (CMake)
       run: |
@@ -41,6 +42,8 @@ jobs:
       run: |
         cmake -S . -B build \
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+          -DANDROID_PLATFORM=${{ matrix.platform.android_platform }} \
+          -DANDROID_ABI=${{ matrix.platform.android_abi }} \
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup_ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
           ${{ matrix.platform.flags }}
 
