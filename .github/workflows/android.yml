@@ -19,8 +19,8 @@ jobs:
       fail-fast: false
       matrix:
         platform:  #[ubuntu-22.04, macos-12, windows-2022]
-          - { name: Android (arm64-v8a), android_abi: "arm64-v8a", android_platform: 16 }
-          - { name: Android (armeabi-v7a), android_abi: "armeabi-v7a", android_platform: 16 }
+          - { name: Android (arm64-v8a), artifact: "android-arm64", android_abi: "arm64-v8a", android_platform: 16 }
+          - { name: Android (armeabi-v7a), artifact: "android-armv7", android_abi: "armeabi-v7a", android_platform: 16 }
           # - { name: Windows, os: windows-2022, shell: pwsh, flags: "-A x64" }
 
     steps:
@@ -45,3 +45,12 @@ jobs:
     - name: Build
       # Build your program with the given configuration
       run: cmake --build build --config ${{env.BUILD_TYPE}}
+    
+    - name: Install
+      run: cmake --install build --config ${{env.BUILD_TYPE}} --prefix dist
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ${{ matrix.platform.artifact }}
+        path: dist
