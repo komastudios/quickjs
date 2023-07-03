@@ -21,8 +21,7 @@ option(BUILD_LIB_DEFAULT_VISIBILITY "Build static library with default visibilit
 option(USE_MSVC_STATIC_RUNTIME "Use MSVC static runtime" OFF)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Android")
-    #set(BUILD_TESTING OFF)
-
+    set(BUILD_TESTING OFF)
     set(BUILD_COMPILER OFF)
     set(BUILD_INTERPRETER OFF)
     set(BUILD_ECMA262_TEST OFF)
