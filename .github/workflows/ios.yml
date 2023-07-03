@@ -1,0 +1,48 @@
+name: main
+
+on:
+  push:
+    branches: [ "main" ]
+  pull_request:
+    branches: [ "main" ]
+
+env:
+  BUILD_TYPE: RelMinSize
+
+jobs:
+  build:
+    name: iOS
+    runs-on: macos-12
+
+    defaults:
+      run:
+        shell: ${{ matrix.platform.shell }}
+
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Configure CMake
+      run: |
+        cmake -S . -B build \
+        -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
+        -GXcode \
+        -DCMAKE_SYSTEM_NAME=iOS \
+        "-DCMAKE_OSX_ARCHITECTURES=arm64" \
+        -DCMAKE_OSX_DEPLOYMENT_TARGET=11.0 \
+        -DCMAKE_IOS_INSTALL_COMBINED=YES
+
+    - name: Build
+      run: cmake --build build --config ${{env.BUILD_TYPE}}
+
+    - name: Test
+      working-directory: ${{github.workspace}}/build
+      run: ctest -C ${{env.BUILD_TYPE}}
+
+    - name: Install
+      run: cmake --install build --config ${{env.BUILD_TYPE}} --prefix dist
+
+    - name: Upload Artifacts
+      uses: actions/upload-artifact@v3
+      with:
+        name: ios-arm64
+        path: dist
