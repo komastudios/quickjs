@@ -21,10 +21,18 @@ option(BUILD_LIB_DEFAULT_VISIBILITY "Build static library with default visibilit
 option(USE_MSVC_STATIC_RUNTIME "Use MSVC static runtime" OFF)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Android")
-    set(BUILD_TESTING OFF)
-    set(BUILD_ECMA262_TEST OFF)
+    #set(BUILD_TESTING OFF)
+
     set(BUILD_COMPILER OFF)
     set(BUILD_INTERPRETER OFF)
+    set(BUILD_ECMA262_TEST OFF)
+
+    set(CMAKE_C_FLAGS_RELWITHDEBINFO "-Oz -g -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_RELWITHDEBINFO "-Oz -g -DNDEBUG")
+    set(CMAKE_C_FLAGS_RELEASE "-Oz -DNDEBUG")
+    set(CMAKE_CXX_FLAGS_RELEASE "-Oz -DNDEBUG")
+
+    add_compile_options(-fsigned-char)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "iOS")
     set(BUILD_TESTING OFF)
     set(BUILD_ECMA262_TEST OFF)
