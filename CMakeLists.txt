@@ -75,7 +75,7 @@ function(add_quickjs_library TARGET_NAME LIB_TYPE)
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
     target_compile_definitions(${TARGET_NAME} PRIVATE QUICKJS_BUILD)
     target_compile_definitions(${TARGET_NAME} PUBLIC JS_NO_NAN_BOXING)
-    if(ANDROID AND ANDROID_ABI MATCHES "armeabi-v7a")
+    if(ANDROID AND (ANDROID_ABI MATCHES "armeabi-v7a") AND (LIB_TYPE STREQUAL "SHARED"))
         target_compile_definitions(${TARGET_NAME} PRIVATE QUICKJS_NO_LOG2)
     endif()
 

@@ -41932,7 +41932,7 @@ static JSValue js_math_random(JSContext *ctx, JSValueConst this_val,
 }
 
 #ifdef QUICKJS_NO_LOG2
-static double log2(double d)
+double log2(double d)
 {
     return log(d) / 0.6931471805599453; //=log(2.0)
 }
