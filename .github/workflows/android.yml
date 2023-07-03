@@ -39,7 +39,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
           -DANDROID_PLATFORM=${{ matrix.platform.android_platform }} \
           -DANDROID_ABI=${{ matrix.platform.android_abi }} \
-          -ANDROID_STL=none \
+          -DANDROID_STL=none \
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup_ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
           ${{ matrix.platform.flags }}
 
