@@ -20,7 +20,7 @@ jobs:
       matrix:
         platform:  #[ubuntu-22.04, macos-12, windows-2022]
           - { name: Android (arm64-v8a), artifact: "android-arm64", android_abi: "arm64-v8a", android_platform: 16 }
-          - { name: Android (armeabi-v7a), artifact: "android-armv7", android_abi: "armeabi-v7a", android_platform: 16 }
+          - { name: Android (armeabi-v7a), artifact: "android-armv7", android_abi: "armeabi-v7a", android_platform: 16, flags: "-DANDROID_ARM_NEON=ON" }
           # - { name: Windows, os: windows-2022, shell: pwsh, flags: "-A x64" }
 
     steps:
@@ -39,6 +39,7 @@ jobs:
           -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} \
           -DANDROID_PLATFORM=${{ matrix.platform.android_platform }} \
           -DANDROID_ABI=${{ matrix.platform.android_abi }} \
+          -ANDROID_STL=none \
           -DCMAKE_TOOLCHAIN_FILE=${{ steps.setup_ndk.outputs.ndk-path }}/build/cmake/android.toolchain.cmake \
           ${{ matrix.platform.flags }}
 
