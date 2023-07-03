@@ -7,7 +7,7 @@ on:
     branches: [ "main" ]
 
 env:
-  BUILD_TYPE: RelMinSize
+  BUILD_TYPE: Release
 
 jobs:
   build:
