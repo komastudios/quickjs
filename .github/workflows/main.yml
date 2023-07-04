@@ -25,7 +25,7 @@ jobs:
         platform:
           - { name: "Linux (GCC)", artifact: "linux-x64", os: ubuntu-22.04, shell: bash }
           - { name: "macOS (Clang)", artifact: "macos-universal", os: macos-12, shell: bash, flags: "-GXcode -DCMAKE_OSX_ARCHITECTURES='arm64;x86_64' -DCMAKE_OSX_DEPLOYMENT_TARGET=10.13" }
-          - { name: "Windows (MSVC)", artifact: "windows-x64", os: windows-2022, shell: pwsh, flags: "-A x64 -DUSE_MSVC_STATIC_RUNTIME=ON -DBUILD_COMPILER=OFF -DBUILD_INTERPRETER=OFF" }
+          - { name: "Windows (MSVC)", artifact: "windows-x64", os: windows-2022, shell: pwsh, flags: "-A x64 -DUSE_MSVC_STATIC_RUNTIME=ON" }
           - { name: "Windows (GCC)", artifact: "windows-x64-mingw", os: windows-2022, shell: 'msys2 {0}', msystem: mingw64, msys-env: mingw-w64-x86_64 }
           # - { name: Windows, os: windows-2022, shell: pwsh, flags: "-A x64" }
 
