@@ -67,7 +67,7 @@ typedef struct JSClass JSClass;
 typedef uint32_t JSClassID;
 typedef uint32_t JSAtom;
 
-#if defined(__LP64__) || defined(_LP64) || INTPTR_MAX >= INT64_MAX
+#if defined(__LP64__) || defined(_LP64) || defined(_WIN64) || INTPTR_MAX >= INT64_MAX
 #define JS_PTR64
 #define JS_PTR64_DEF(a) a
 #else
@@ -116,6 +116,8 @@ typedef struct JSRefCountHeader {
 typedef struct __JSValue *JSValue;
 typedef const struct __JSValue *JSValueConst;
 
+#define JS_VALUE_CONST_CAST(v) (JSValue)(v)
+
 #define JS_VALUE_GET_TAG(v) (int)((uintptr_t)(v) & 0xf)
 /* same as JS_VALUE_GET_TAG, but return JS_TAG_FLOAT64 with NaN boxing */
 #define JS_VALUE_GET_NORM_TAG(v) JS_VALUE_GET_TAG(v)
@@ -146,6 +148,7 @@ static inline JS_BOOL JS_VALUE_IS_NAN(JSValue v)
 typedef uint64_t JSValue;
 
 #define JSValueConst JSValue
+#define JS_VALUE_CONST_CAST(v) (v)
 
 #define JS_VALUE_GET_TAG(v) (int)((v) >> 32)
 #define JS_VALUE_GET_INT(v) (int)(v)
@@ -221,6 +224,7 @@ typedef struct JSValue {
 } JSValue;
 
 #define JSValueConst JSValue
+#define JS_VALUE_CONST_CAST(v) (v)
 
 #define JS_VALUE_GET_TAG(v) ((int32_t)(v).tag)
 /* same as JS_VALUE_GET_TAG, but return JS_TAG_FLOAT64 with NaN boxing */
@@ -681,7 +685,7 @@ static inline JSValue JS_DupValue(JSContext *ctx, JSValueConst v)
         JSRefCountHeader *p = (JSRefCountHeader *)JS_VALUE_GET_PTR(v);
         p->ref_count++;
     }
-    return (JSValue)v;
+    return JS_VALUE_CONST_CAST(v);
 }
 
 static inline JSValue JS_DupValueRT(JSRuntime *rt, JSValueConst v)
@@ -690,7 +694,7 @@ static inline JSValue JS_DupValueRT(JSRuntime *rt, JSValueConst v)
         JSRefCountHeader *p = (JSRefCountHeader *)JS_VALUE_GET_PTR(v);
         p->ref_count++;
     }
-    return (JSValue)v;
+    return JS_VALUE_CONST_CAST(v);
 }
 
 QUICKJS_EXPORT int JS_ToBool(JSContext *ctx, JSValueConst val); /* return -1 for JS_EXCEPTION */

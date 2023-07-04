@@ -27,15 +27,46 @@
 
 #include <stdlib.h>
 #include <inttypes.h>
+#ifdef _MSC_VER
+#   include <windows.h>
+#   include <BaseTsd.h>
+#   include <fcntl.h>
+#   include <io.h>
+#   include <time.h>
+#   include <sys/stat.h>
+#   include <sys/utime.h>
+#   define alloca(s) _alloca(s)
+#   define popen _popen
+#   define pclose _pclose
+#   define ssize_t SSIZE_T
+#   define O_BINARY _O_BINARY
+#   define O_TEXT _O_TEXT
+#   define stat _stat
+#   define S_ISDIR(st_mode) ((st_mode) & _S_IFDIR)
+#   define S_IFIFO _S_IFIFO
+#   define S_IFBLK 0
+#endif
 
 /* set if CPU is big endian */
 #undef WORDS_BIGENDIAN
 
-#define likely(x)       __builtin_expect(!!(x), 1)
-#define unlikely(x)     __builtin_expect(!!(x), 0)
-#define force_inline inline __attribute__((always_inline))
-#define no_inline __attribute__((noinline))
-#define __maybe_unused __attribute__((unused))
+#ifdef __has_attribute
+#   define likely(x)       __builtin_expect(!!(x), 1)
+#   define unlikely(x)     __builtin_expect(!!(x), 0)
+#   define force_inline inline __attribute__((always_inline))
+#   define no_inline __attribute__((noinline))
+#   define __maybe_unused __attribute__((unused))
+#   define cutils_packed __attribute__((packed))
+#else
+#   define likely(x)       (x)
+#   define unlikely(x)     (x)
+#   define force_inline __forceinline
+#   define no_inline __declspec(noinline)
+#   define __maybe_unused
+#   define cutils_packed
+#   define __attribute__(x)
+#   define __attribute(x)
+#endif
 
 #define xglue(x, y) x ## y
 #define glue(x, y) xglue(x, y)
@@ -62,6 +93,17 @@ void pstrcpy(char *buf, int buf_size, const char *str);
 char *pstrcat(char *buf, int buf_size, const char *s);
 int strstart(const char *str, const char *val, const char **ptr);
 int has_suffix(const char *str, const char *suffix);
+
+#ifdef _MSC_VER
+static int gettimeofday(struct timeval *tp, struct timezone *tzp)
+{
+    struct timespec ts;
+    timespec_get(&ts, TIME_UTC);
+    tp->tv_sec = ts.tv_sec;
+    tp->tv_usec = ts.tv_nsec / 1000;
+    return 0;
+}
+#endif
 
 static inline int max_int(int a, int b)
 {
@@ -111,6 +153,39 @@ static inline int64_t min_int64(int64_t a, int64_t b)
         return b;
 }
 
+#if defined(_MSC_VER) && defined(_WIN64)
+/* WARNING: undefined if a = 0 */
+static inline int clz32(unsigned int a)
+{
+    unsigned long index;
+    _BitScanReverse(&index, a);
+    return 31 - index;
+}
+
+/* WARNING: undefined if a = 0 */
+static inline int clz64(uint64_t a)
+{
+    unsigned long index;
+    _BitScanReverse64(&index, a);
+    return 63 - index;
+}
+
+/* WARNING: undefined if a = 0 */
+static inline int ctz32(unsigned int a)
+{
+    unsigned long index;
+    _BitScanForward(&index, a);
+    return index;
+}
+
+/* WARNING: undefined if a = 0 */
+static inline int ctz64(uint64_t a)
+{
+    unsigned long index;
+    _BitScanForward64(&index, a);
+    return index;
+}
+#else
 /* WARNING: undefined if a = 0 */
 static inline int clz32(unsigned int a)
 {
@@ -134,18 +209,25 @@ static inline int ctz64(uint64_t a)
 {
     return __builtin_ctzll(a);
 }
+#endif
 
-struct __attribute__((packed)) packed_u64 {
+#ifdef _MSC_VER
+#pragma pack(push, 1)
+#endif
+struct cutils_packed packed_u64 {
     uint64_t v;
 };
 
-struct __attribute__((packed)) packed_u32 {
+struct cutils_packed packed_u32 {
     uint32_t v;
 };
 
-struct __attribute__((packed)) packed_u16 {
+struct cutils_packed packed_u16 {
     uint16_t v;
 };
+#ifdef _MSC_VER
+#pragma pack(pop)
+#endif
 
 static inline uint64_t get_u64(const uint8_t *tab)
 {

@@ -28,24 +28,31 @@
 #include <inttypes.h>
 #include <string.h>
 #include <assert.h>
-#include <unistd.h>
-#include <errno.h>
-#include <fcntl.h>
-#include <sys/time.h>
-#include <time.h>
-#include <signal.h>
-#include <limits.h>
-#include <sys/stat.h>
-#include <dirent.h>
-#if defined(_WIN32)
-#include <windows.h>
-#include <conio.h>
-#include <utime.h>
+#if defined(_MSC_VER)
+#   include <windows.h>
+#   include <signal.h>
+#   define PATH_MAX MAX_PATH
 #else
-#include <dlfcn.h>
-#include <termios.h>
-#include <sys/ioctl.h>
-#include <sys/wait.h>
+#   include <unistd.h>
+#   include <errno.h>
+#   include <fcntl.h>
+#   include <sys/time.h>
+#   include <time.h>
+#   include <signal.h>
+#   include <limits.h>
+#   include <sys/stat.h>
+#   include <dirent.h>
+#   if defined(_WIN32)
+#       include <windows.h>
+#       include <conio.h>
+#       include <utime.h>
+#   else
+#       include <dlfcn.h>
+#       include <termios.h>
+#       include <sys/ioctl.h>
+#       include <sys/wait.h>
+#   endif
+#endif
 
 #if defined(__APPLE__)
 typedef sig_t sighandler_t;
@@ -54,8 +61,6 @@ typedef sig_t sighandler_t;
 #define environ (*_NSGetEnviron())
 #endif
 #endif /* __APPLE__ */
-
-#endif
 
 #if !defined(_WIN32)
 /* enable the os.Worker API. IT relies on POSIX threads */
@@ -2427,6 +2432,10 @@ static JSValue js_os_mkdir(JSContext *ctx, JSValueConst this_val,
 static JSValue js_os_readdir(JSContext *ctx, JSValueConst this_val,
                              int argc, JSValueConst *argv)
 {
+#ifdef _MSC_VER
+    // TODO: implement this
+    return JS_ThrowTypeError(ctx, "not implemented");
+#else
     const char *path;
     DIR *f;
     struct dirent *d;
@@ -2465,6 +2474,7 @@ static JSValue js_os_readdir(JSContext *ctx, JSValueConst this_val,
     closedir(f);
  done:
     return make_obj_error(ctx, obj, err);
+#endif
 }
 
 #if !defined(_WIN32)
