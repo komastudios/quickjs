@@ -10,6 +10,7 @@ set(CMAKE_POSITION_INDEPENDENT_CODE ON)
 enable_testing()
 
 option(BUILD_SHARED "Build shared library" ON)
+option(BUILD_LOADER "Build loader utility library" ON)
 
 option(BUILD_COMPILER "Build compiler" ON)
 option(BUILD_INTERPRETER "Build interpreter" ON)
@@ -21,6 +22,8 @@ option(BUILD_LIB_DEFAULT_VISIBILITY "Build static library with default visibilit
 option(USE_MSVC_STATIC_RUNTIME "Use MSVC static runtime" OFF)
 
 if (${CMAKE_SYSTEM_NAME} MATCHES "Android")
+    set(BUILD_LOADER OFF)
+
     set(BUILD_TESTING OFF)
     set(BUILD_COMPILER OFF)
     set(BUILD_INTERPRETER OFF)
@@ -33,6 +36,8 @@ if (${CMAKE_SYSTEM_NAME} MATCHES "Android")
 
     add_compile_options(-fsigned-char)
 elseif(${CMAKE_SYSTEM_NAME} MATCHES "iOS")
+    set(BUILD_LOADER OFF)
+
     set(BUILD_TESTING OFF)
     set(BUILD_ECMA262_TEST OFF)
     set(BUILD_COMPILER OFF)
@@ -82,6 +87,7 @@ function(add_quickjs_library TARGET_NAME LIB_TYPE)
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
     target_compile_definitions(${TARGET_NAME} PRIVATE QUICKJS_BUILD)
     target_compile_definitions(${TARGET_NAME} PUBLIC JS_NO_NAN_BOXING)
+    set_property(TARGET ${TARGET_NAME} PROPERTY C_VISIBILITY_PRESET hidden)
     if(ANDROID AND (ANDROID_ABI MATCHES "armeabi-v7a") AND (LIB_TYPE STREQUAL "SHARED"))
         target_compile_definitions(${TARGET_NAME} PRIVATE QUICKJS_NO_LOG2)
     endif()
@@ -91,6 +97,9 @@ function(add_quickjs_library TARGET_NAME LIB_TYPE)
             target_compile_definitions(${TARGET_NAME} PUBLIC QUICKJS_DLL)
         endif()
     else()
+        if (LIB_TYPE STREQUAL "SHARED")
+            target_compile_definitions(${TARGET_NAME} PRIVATE QUICKJS_BUILD_DEFAULT_VISIBILITY)
+        endif()
         target_compile_definitions(${TARGET_NAME} PRIVATE _GNU_SOURCE)
         #target_compile_options(${TARGET_NAME} PRIVATE -Wnoimplicit-const-int-float-conversion)
     endif()
@@ -119,6 +128,20 @@ install(FILES
 
 if(BUILD_SHARED)
     add_quickjs_library(quickjs SHARED)
+endif()
+
+if(BUILD_LOADER)
+    add_library(quickjs-loader SHARED
+        quickjs-loader.c)
+    target_compile_definitions(quickjs-loader PRIVATE QUICKJS_LOADER_BUILD)
+    install(TARGETS quickjs-loader
+            ARCHIVE DESTINATION lib
+            LIBRARY DESTINATION lib
+            RUNTIME DESTINATION bin)
+    if (UNIX)
+        find_library(DL_LIBRARY dl REQUIRED)
+        target_link_libraries(quickjs-loader PUBLIC ${DL_LIBRARY})
+    endif()
 endif()
 
 if (BUILD_COMPILER)
