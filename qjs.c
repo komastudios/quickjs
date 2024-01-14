@@ -220,7 +220,7 @@ static size_t js_trace_malloc_usable_size(const void *ptr)
     return malloc_size(ptr);
 #elif defined(_WIN32)
     return _msize((void *)ptr);
-#elif defined(EMSCRIPTEN) || defined(__ANDROID__)
+#elif defined(__EMSCRIPTEN__) || defined(__ANDROID__)
     return 0;
 #elif defined(__linux__)
     return malloc_usable_size((void *)ptr);

@@ -50,7 +50,7 @@
 
 #define OPTIMIZE         1
 #define SHORT_OPCODES    1
-#if defined(EMSCRIPTEN) || defined(__ANDROID__) || defined(_MSC_VER)
+#if defined(__EMSCRIPTEN__) || defined(__ANDROID__) || defined(_MSC_VER)
 #define DIRECT_DISPATCH  0
 #else
 #define DIRECT_DISPATCH  1
@@ -69,11 +69,11 @@
 
 /* define to include Atomics.* operations which depend on the OS
    threads */
-#if !defined(EMSCRIPTEN) && !defined(_WIN32) && !defined(__ANDROID__)
+#if !defined(__EMSCRIPTEN__) && !defined(_WIN32) && !defined(__ANDROID__)
 #define CONFIG_ATOMICS
 #endif
 
-#if !defined(EMSCRIPTEN) && !defined(_MSC_VER) && !defined(__ANDROID__)
+#if !defined(__EMSCRIPTEN__) && !defined(_MSC_VER) && !defined(__ANDROID__)
 /* enable stack limitation */
 #define CONFIG_STACK_CHECK
 #endif
@@ -1701,7 +1701,7 @@ static size_t js_def_malloc_usable_size(const void *ptr)
     return malloc_size(ptr);
 #elif defined(_WIN32)
     return _msize((void *)ptr);
-#elif defined(EMSCRIPTEN) || defined(__ANDROID__)
+#elif defined(__EMSCRIPTEN__) || defined(__ANDROID__)
     return 0;
 #elif defined(__linux__)
     return malloc_usable_size((void *)ptr);

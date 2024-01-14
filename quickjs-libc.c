@@ -62,7 +62,7 @@ typedef sig_t sighandler_t;
 #endif
 #endif /* __APPLE__ */
 
-#if !defined(_WIN32) && !defined(EMSCRIPTEN)
+#if !defined(_WIN32) && !defined(__EMSCRIPTEN__)
 /* enable the os.Worker API. IT relies on POSIX threads */
 #define USE_WORKER
 #endif
@@ -3648,7 +3648,7 @@ void js_std_set_worker_new_context_func(JSContext *(*func)(JSRuntime *rt))
 #define OS_PLATFORM "win32"
 #elif defined(__APPLE__)
 #define OS_PLATFORM "darwin"
-#elif defined(EMSCRIPTEN)
+#elif defined(__EMSCRIPTEN__)
 #define OS_PLATFORM "js"
 #elif defined(__ANDROID__)
 #define OS_PLATFORM "android"
