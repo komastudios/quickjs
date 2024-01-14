@@ -94,6 +94,10 @@ function(add_quickjs_library TARGET_NAME LIB_TYPE)
         target_compile_definitions(${TARGET_NAME} PRIVATE QUICKJS_NO_LOG2)
     endif()
 
+    if ((CMAKE_C_COMPILER_ID STREQUAL "GNU") OR (CMAKE_C_COMPILER_ID MATCHES "Clang"))
+        target_compile_options(${TARGET_NAME} PRIVATE -fwrapv)
+    endif()
+
     if(WIN32)
         if (LIB_TYPE STREQUAL "SHARED")
             target_compile_definitions(${TARGET_NAME} PUBLIC QUICKJS_DLL)
