@@ -65,6 +65,8 @@ set(LIB_PUBLIC_HEADERS
 set(LIB_SOURCE_FILES 
     cutils.c
     cutils.h
+    libbf.c
+    libbf.h
     libregexp.c
     libregexp-opcode.h
     libregexp.h
@@ -85,7 +87,7 @@ set(LIB_SOURCE_FILES
 function(add_quickjs_library TARGET_NAME LIB_TYPE)
     add_library(${TARGET_NAME} ${LIB_TYPE} ${LIB_SOURCE_FILES})
     target_include_directories(${TARGET_NAME} PUBLIC ${CMAKE_CURRENT_SOURCE_DIR})
-    target_compile_definitions(${TARGET_NAME} PRIVATE QUICKJS_BUILD)
+    target_compile_definitions(${TARGET_NAME} PRIVATE QUICKJS_BUILD CONFIG_BIGNUM)
     target_compile_definitions(${TARGET_NAME} PUBLIC JS_NO_NAN_BOXING)
     set_property(TARGET ${TARGET_NAME} PROPERTY C_VISIBILITY_PRESET hidden)
     if(ANDROID AND (ANDROID_ABI MATCHES "armeabi-v7a") AND (LIB_TYPE STREQUAL "SHARED"))
