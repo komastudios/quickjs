@@ -2,9 +2,9 @@ name: ios
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "es2023" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "es2023" ]
 
 env:
   BUILD_TYPE: Release

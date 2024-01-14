@@ -2,9 +2,9 @@ name: android
 
 on:
   push:
-    branches: [ "main" ]
+    branches: [ "main", "es2023" ]
   pull_request:
-    branches: [ "main" ]
+    branches: [ "main", "es2023" ]
 
 env:
   # Customize the CMake build type here (Release, Debug, RelWithDebInfo, etc.)
