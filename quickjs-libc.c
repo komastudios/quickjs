@@ -62,7 +62,7 @@ typedef sig_t sighandler_t;
 #endif
 #endif /* __APPLE__ */
 
-#if !defined(_WIN32)
+#if !defined(_WIN32) && !defined(EMSCRIPTEN)
 /* enable the os.Worker API. IT relies on POSIX threads */
 #define USE_WORKER
 #endif
