@@ -1,0 +1,7 @@
+.git
+.install/
+zig-cache/
+zig-out/
+build/
+cmake-build-*/
+.idea/
