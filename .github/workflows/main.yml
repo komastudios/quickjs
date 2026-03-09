@@ -42,7 +42,7 @@ jobs:
           ${{ matrix.platform.msys-env }}-pkg-config
 
     - name: Checkout repository
-      uses: actions/checkout@v3
+      uses: actions/checkout@v4
 
     - name: Configure CMake
       run: cmake -S . -B build -DCMAKE_BUILD_TYPE=${{env.BUILD_TYPE}} ${{ matrix.platform.flags }}
@@ -58,7 +58,7 @@ jobs:
       run: cmake --install build --config ${{env.BUILD_TYPE}} --prefix dist
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.platform.artifact }}
         path: dist

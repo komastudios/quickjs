@@ -24,7 +24,7 @@ jobs:
           # - { name: Windows, os: windows-2022, shell: pwsh, flags: "-A x64" }
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
     - uses: nttld/setup-ndk@v1
       id: setup_ndk
@@ -51,7 +51,7 @@ jobs:
       run: cmake --install build --config ${{env.BUILD_TYPE}} --prefix dist
 
     - name: Upload Artifacts
-      uses: actions/upload-artifact@v3
+      uses: actions/upload-artifact@v4
       with:
         name: ${{ matrix.platform.artifact }}
         path: dist
